@@ -1,7 +1,7 @@
 using Collections = System.Collections.Generic;
 using HL = HarmonyLib;
 
-namespace DeathsDoor.AlternativeGameModes;
+namespace DDoor.AlternativeGameModes;
 
 public static class AlternativeGameModes
 {
@@ -9,6 +9,8 @@ public static class AlternativeGameModes
     {
         modes.Add(new() { Name = name, Effect = effect });
     }
+
+    public static string SelectedModeName => modes[selectedMode].Name;
 
     private struct AltGameMode
     {
@@ -22,6 +24,21 @@ public static class AlternativeGameModes
     };
 
     private static int selectedMode = 0;
+
+    [HL.HarmonyPatch(typeof(SaveMenu), nameof(SaveMenu.closeSubMenu))]
+    private static class CloseSubMenuPatch
+    {
+        private static void Postfix(SaveMenu __instance, bool silent)
+        {
+            // When silent = true, we are starting the game.
+            // We need to keep the mode set until NewGamePatch runs.
+            if (!silent)
+            {
+                selectedMode = 0;
+                __instance.selectedOptions[0].buttonText.text = modes[selectedMode].Name;
+            }
+        }
+    }
 
     // SaveMenu does not have any implementation for onLeftEvent
     // or onRightEvent, so we cannot hook that directly.
@@ -78,6 +95,7 @@ public static class AlternativeGameModes
                 // same way as in normal code.
                 GameSave.currentSave = __instance.saveFile;
                 modes[selectedMode].Effect();
+                selectedMode = 0;
             }
         }
     }

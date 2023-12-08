@@ -1,7 +1,7 @@
 using Bep = BepInEx;
 using HL = HarmonyLib;
 
-namespace DeathsDoor.AlternativeGameModes;
+namespace DDoor.AlternativeGameModes;
 
 [Bep.BepInPlugin("deathsdoor.alternativegamemodes", "AlternativeGameModes", "1.0.0.0")]
 internal class AlternativeGameModesPlugin : Bep.BaseUnityPlugin

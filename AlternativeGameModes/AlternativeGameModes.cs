@@ -5,6 +5,11 @@ namespace DDoor.AlternativeGameModes;
 
 public static class AlternativeGameModes
 {
+	public static void Add(string name, System.Action effect)
+	{
+		modes.Add(new() { Name = name, Effect = effect });
+	}
+
 	public static void Add(string name, System.Action effect, string modeKey)
 	{
 		modes.Add(new() { Name = name, Effect = effect, ModeKey = modeKey });
@@ -108,6 +113,12 @@ public static class AlternativeGameModes
 				// Start at index of 1 to skip the default "START" mode
 				for (int i = 1; i < modes.Count; i++)
 				{
+					// Skip modes that don't specify a mode key
+					if (string.IsNullOrEmpty(modes[i].ModeKey))
+					{
+						continue;
+					}
+
 					if (__instance.saveFile.IsKeyUnlocked(modes[i].ModeKey))
 					{
 						modes[i].Effect();
